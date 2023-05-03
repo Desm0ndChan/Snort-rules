@@ -1,0 +1,9 @@
+iptables -A INPUT -p tcp --dport 88 -m string --string "KRB5KDC_ERR_PREAUTH_REQUIRED" --algo bm -j LOG --log-prefix "Kerberoast Attack Detected: "
+iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/second -j LOG --log-prefix "Reflective Ping Flood Detected: "
+iptables -A INPUT -s 192.168.0.0/16 -j LOG --log-prefix "Crafted Packet from 192.168.X.X Subnet Detected: "
+iptables -A INPUT -p tcp --dport 22 -m string --string "SSH-2.0-" --algo bm -m recent --set --name ssh --rsource
+iptables -A INPUT -p tcp --dport 22 -m string --string "SSH-2.0-" --algo bm -m recent --rcheck --seconds 60 --hitcount 3 --name ssh --rsource -j LOG --log-prefix "SSH Bruteforce Attempt Detected: "
+iptables -A INPUT -p tcp --dport 80 -m string --string "GET" --algo bm -m string --string ";" --algo bm -m string --string "'" --algo bm -m string --string "\"" --algo bm -m string --string "/" --algo bm -m string --string "|" --algo bm -m string --string "$" --algo bm -m string --string "&" --algo bm -j LOG --log-prefix "HTTP Request with Command Injection Payload Detected: "
+iptables -A INPUT -p tcp --dport 445 -m string --string "|00 00 00 00 00 00 00 00|FFSMB" --algo bm -j LOG --log-prefix "SMB Anonymous Login Attempt Detected: "
+
+iptables -A INPUT -p tcp -m tcp --dport 0:65535 -m string --hex-string "|4d 53 46 54 20 30 30 00 00 00 00 00 00 00 01 06|2e 00 00 00|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|" --algo bm -j LOG --log-prefix "  MSFVenom Eternal Blue Exploit Detected: "
