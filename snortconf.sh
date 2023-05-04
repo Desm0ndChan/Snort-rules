@@ -1,6 +1,6 @@
 #!/bin/bash
-$INTERFACE="enp0s8"
-$ALARM_MODE="console"
+INTERFACE="enp0s8"
+ALARM_MODE="console"
 
 # Check if the promisc mode enabled
 /usr/sbin/ip link show $INTERFACE | /usr/bin/grep -q promisc && /usr/bin/echo "Promiscuous mode is enabled" || /usr/bin/echo "Promiscuous mode is disabled"
