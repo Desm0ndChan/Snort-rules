@@ -1,9 +1,18 @@
-alert tcp any any -> any 88 (msg:"Kerbrute User Enumeration Detected"; content:"AS-REQ"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"samAccountName"; sid:1000002; rev:1;)
-alert tcp any any -> any 88 (msg:"Kerbrute Password Spray Detected"; content:"AS-REQ"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"password"; sid:1000003; rev:1;)
-alert tcp any any -> any 88 (msg:"Kerberoast Attack Detected"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"servicePrincipalName"; sid:1000004; rev:1;)
-alert icmp any any -> any any (msg:"Reflective Ping Flood Detected"; icode:0; itype:8; threshold: type both, track by_src, count 10, seconds 1; sid:1000005; rev:1;)
-alert ip 192.168.0.0/16 any -> any any (msg:"Crafted Packet from 192.168.X.X Subnet Detected"; sid:1000006; rev:1;)
-alert tcp any any -> any 22 (msg:"SSH Bruteforce Attempt Detected"; flow:to_server,established; content:"SSH-"; content:"PasswordAuthentication"; content:"Authentication failure"; sid:1000007; rev:1;)
-alert tcp any any -> any 80 (msg:"HTTP Request with Command Injection Payload Detected"; flow:to_server,established; content:"GET"; content:"HTTP/1."; content:"User-Agent|3a|"; content:"Accept|3a|"; content:"|0d 0a|"; pcre:"/^((?:(?!(?:;|'|\"|\/|\||\$|\&)).)*)[;'\\"\/|\$&]+((?:(?!(?:;|'|\"|\/|\||\$|\&)).)*)$/U"; sid:1000008; rev:1;)
-alert tcp any any -> any 445 (msg:"SMB Anonymous Login Attempt Detected"; flow:to_server,established; content:"|00 00 00 00 00 00 00 00|"; content:"|FF|SMB"; content:"|72 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; sid:1000009; rev:1;)
-alert tcp any any -> any any (msg:"MSFVenom Eternal Blue Exploit Detected"; flow:to_server,established; content:"|4d 53 46 54 20 30 30 00 00 00 00 00 00 00 01 06|"; content:"|2e 00 00 00|"; content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"; content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"; sid:1000010; rev:1;)
+#Kerbrute user enum
+alert tcp any any -> $HOME_NET 88 (msg:"Kerbrute User Enumeration Detected"; content:"AS-REQ"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"samAccountName"; sid:1000002; rev:1;)
+#Kerbrute Password spray
+alert tcp any any -> $HOME_NET 88 (msg:"Kerbrute Password Spray Detected"; content:"AS-REQ"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"password"; sid:1000003; rev:1;)
+#Kerberoast
+alert tcp any any -> $HOME_NET 88 (msg:"Kerberoast Attack Detected"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"servicePrincipalName"; sid:1000004; rev:1;)
+# Reflective icmp flood
+alert icmp any any -> $HOME_NET any (msg:"Reflective Ping Flood Detected"; icode:0; itype:8; threshold: type both, track by_src, count 10, seconds 1; sid:1000005; rev:1;)
+# Crafted packet from other private subnet
+alert ip 192.168.0.0/16 any -> $HOME_NET any (msg:"Crafted Packet from 192.168.X.X Subnet Detected"; sid:1000006; rev:1;)
+# SSH Bruteforce attempt
+alert tcp any any -> $HOME_NET 22 (msg:"SSH Bruteforce Attempt Detected"; flow:to_server,established; content:"SSH-"; content:"PasswordAuthentication"; content:"Authentication failure"; sid:1000007; rev:1;)
+# command injection request
+alert tcp any any -> $HOME_NET 80 (msg:"HTTP Request with Command Injection Payload Detected"; flow:to_server,established; content:"POST"; content:"HTTP/1."; content:"User-Agent|3a|"; content:"Accept|3a|"; content:"|0d 0a|"; pcre:"/^((?:(?!(?:;|'|\"|\/|\||\$|\&)).)*)[;'\\"\/|\$&]+((?:(?!(?:;|'|\"|\/|\||\$|\&)).)*)$/U"; sid:1000008; rev:1;)
+# Anonymous smb
+alert tcp any any -> $HOME_NET 445 (msg:"SMB Anonymous Login Attempt Detected"; flow:to_server,established; content:"|00 00 00 00 00 00 00 00|"; content:"|FF|SMB"; content:"|72 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; sid:1000009; rev:1;)
+# msfvenom enternal blue
+alert tcp any any -> $HOME_NET any (msg:"MSFVenom Eternal Blue Exploit Detected"; flow:to_server,established; content:"|4d 53 46 54 20 30 30 00 00 00 00 00 00 00 01 06|"; content:"|2e 00 00 00|"; content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"; content:"|00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00|"; sid:1000010; rev:1;) 
