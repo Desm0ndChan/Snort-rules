@@ -11,7 +11,7 @@ alert ip 192.168.0.0/16 any -> $HOME_NET any (msg:"Crafted Packet from 192.168.X
 # SSH Bruteforce attempt
 alert tcp any any -> $HOME_NET 22 (msg:"SSH Bruteforce Attempt Detected"; flow:to_server,established; content:"SSH-"; content:"PasswordAuthentication"; content:"Authentication failure"; sid:1000007; rev:1;)
 # command injection request
-alert tcp any any -> $HOME_NET 80 (msg:"HTTP Request with Command Injection Payload Detected"; flow:to_server,established; content:"POST"; content:"HTTP/1."; content:"User-Agent|3a|"; content:"Accept|3a|"; content:"|0d 0a|"; pcre:"/^((?:(?!(?:;|'|\"|\/|\||\$|\&)).)*)[;'\\"\/|\$&]+((?:(?!(?:;|'|\"|\/|\||\$|\&)).)*)$/U"; sid:1000008; rev:1;)
+alert tcp any any -> any any (msg:"Command injection detected in POST request"; flow:to_server,established; content:"POST"; nocase; http_method; content:"|0d 0a|"; http_client_body; content:"|3b|"; http_client_body; content:"|26|"; http_client_body; content:"|7c|"; http_client_body; content:"|60|"; http_client_body; sid:1000002; rev:2;)
 # Anonymous smb
 alert tcp any any -> $HOME_NET 445 (msg:"SMB Anonymous Login Attempt Detected"; flow:to_server,established; content:"|00 00 00 00 00 00 00 00|"; content:"|FF|SMB"; content:"|72 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; content:"|00 00 00 00|"; sid:1000009; rev:1;)
 # msfvenom enternal blue
