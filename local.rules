@@ -1,9 +1,3 @@
-#Kerbrute user enum
-alert tcp any any -> $HOME_NET 88 (msg:"Kerbrute User Enumeration Detected"; content:"AS-REQ"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"samAccountName"; sid:1000002; rev:1;)
-#Kerbrute Password spray
-alert tcp any any -> $HOME_NET 88 (msg:"Kerbrute Password Spray Detected"; content:"AS-REQ"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"password"; sid:1000003; rev:1;)
-#Kerberoast
-alert tcp any any -> $HOME_NET 88 (msg:"Kerberoast Attack Detected"; content:"KRB5KDC_ERR_PREAUTH_REQUIRED"; content:"servicePrincipalName"; sid:1000004; rev:1;)
 # Reflective icmp flood
 alert icmp any any -> $HOME_NET any (msg:"Reflective Ping Flood Detected";\
     icode:0;\
