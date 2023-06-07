@@ -3,8 +3,6 @@ alert icmp any any -> $HOME_NET any (msg:"Reflective Ping Flood Detected";\
     icode:0;\
     threshold: type both, track by_src, count 10, seconds 1;\
     sid:1000005; rev:1;)
-# Crafted packet from other private subnet
-alert ip 192.168.0.0/16 any -> $HOME_NET any (msg:"Crafted Packet from 192.168.X.X Subnet Detected"; sid:1000006; rev:1;)
 # SSH Bruteforce attempt
 alert tcp any any -> $HOME_NET 22 (msg:"SSH Bruteforce Attempt Detected";\
     flow:to_server,established;\
